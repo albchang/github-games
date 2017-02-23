@@ -69,7 +69,7 @@
     //-------------------------------------------------------------------------
 
     var KEY     = { ESC: 27, SPACE: 32, LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40 },
-        DIR     = { UP: 0, RIGHT: 1, DOWN: 2, LEFT: 3, MIN: 0, MAX: 3 },
+        DIR     = { UP: 0, RIGHT: 1, DOWN: 2, LEFT: 3, MIN: 0, MAX: 3, DROP: 4 },
         stats   = new Stats(),
         canvas  = get('canvas'),
         ctx     = canvas.getContext('2d'),
@@ -220,6 +220,7 @@
           case KEY.RIGHT:  actions.push(DIR.RIGHT); handled = true; break;
           case KEY.UP:     actions.push(DIR.UP);    handled = true; break;
           case KEY.DOWN:   actions.push(DIR.DOWN);  handled = true; break;
+          case KEY.SPACE:  actions.push(DIR.DROP);  handled = true; break;
           case KEY.ESC:    lose();                  handled = true; break;
         }
       }
@@ -281,6 +282,7 @@
         case DIR.RIGHT: move(DIR.RIGHT); break;
         case DIR.UP:    rotate();        break;
         case DIR.DOWN:  drop();          break;
+        case DIR.DROP:  dropFast();      break;
       }
     }
 
@@ -321,6 +323,22 @@
         if (occupied(current.type, current.x, current.y, current.dir)) {
           lose();
         }
+      }
+    }
+
+    function dropFast() {
+      while (move(DIR.DOWN)) {
+        // keep dropping
+      }
+      
+      addScore(10);
+      dropPiece();
+      removeLines();
+      setCurrentPiece(next);
+      setNextPiece(randomPiece());
+      clearActions();
+      if (occupied(current.type, current.x, current.y, current.dir)) {
+        lose();
       }
     }
 
